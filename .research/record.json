@@ -125,6 +125,12 @@
               "model": "gpt-4.1",
               "supported": false,
               "reason": "The cited passage (s2.p1) claims that KD at increased temperatures becomes ineffective when the teacher is LS-trained, but it does not provide specific numerical differences in ECE values nor specifically compare ECE between hard and LS teachers at T=4; thus, the citing text draws a more specific empirical conclusion than the passage supports."
+            },
+            {
+              "text_sha256": "8946dbb41a1206d389e3059cb460048195ba947464698ebc08ef36007a750bfd",
+              "model": "gpt-4.1",
+              "supported": true,
+              "reason": "The citing text accurately summarizes that systematic diffusion with a LS-trained teacher at high KD temperature negates the benefits of distillation, as claimed in the quoted passage."
             }
           ]
         },
@@ -156,6 +162,12 @@
               "model": "gpt-4.1",
               "supported": false,
               "reason": "The cited passage recommends 'LS-trained teacher with T=1' for high performance, but does not state that ECE is 0.01+ lower than using a hard teacher, nor does it provide quantitative evidence for improved calibration (lower ECE) under those conditions."
+            },
+            {
+              "text_sha256": "8946dbb41a1206d389e3059cb460048195ba947464698ebc08ef36007a750bfd",
+              "model": "gpt-4.1",
+              "supported": true,
+              "reason": "The citing text correctly states that Chandrasegaran et al. recommend using an LS-trained teacher with low-temperature (T=1) transfer, as supported directly by the cited passage."
             }
           ]
         }
@@ -276,6 +288,12 @@
               "model": "gpt-4.1",
               "supported": false,
               "reason": "The citing text says Shen et al. re-examined experimentally and argued that the incompatibility is one-sided, but the quoted passage only states that LS erases relative information between teacher logits, not that this view is one-sided or that they did empirical studies."
+            },
+            {
+              "text_sha256": "8946dbb41a1206d389e3059cb460048195ba947464698ebc08ef36007a750bfd",
+              "model": "gpt-4.1",
+              "supported": true,
+              "reason": "The citing text faithfully reports that LS (label smoothing) erases relative information between teacher logits, similar to the original passage statement."
             }
           ]
         }
