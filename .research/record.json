@@ -1,1 +1,341 @@
-{}
+{
+  "literature": [
+    {
+      "id": "s1",
+      "title": "When Does Label Smoothing Help?",
+      "authors": [
+        "Rafael Müller",
+        "Simon Kornblith",
+        "Geoffrey Hinton"
+      ],
+      "year": 2019,
+      "venue": "NeurIPS",
+      "doi": "10.48550/arxiv.1906.02629",
+      "arxiv_id": "1906.02629",
+      "url": "https://arxiv.org/pdf/1906.02629",
+      "bibkey": "mller-2019-when",
+      "verified_by": "doi.org",
+      "verified_at": "2026-09-17T16:25:10+00:00",
+      "fulltext": {
+        "path": ".research/sources/s1/fulltext.txt",
+        "sha256": "772d3a33ccb9510825e76b19f48d05b650cfefb6fa995d7e07ae0861aebe8581"
+      },
+      "parser": "pymupdf 1.26.6",
+      "passages": [
+        {
+          "id": "s1.p1",
+          "node_type": "result",
+          "quote": "if a teacher network is trained with label smoothing, knowledge distillation into a student network is much less effective"
+        },
+        {
+          "id": "s1.p2",
+          "node_type": "result",
+          "quote": "we show that label smoothing also reduces ECE and can be used to calibrate a network without the need for temperature scaling"
+        }
+      ]
+    },
+    {
+      "id": "s2",
+      "title": "Revisiting Label Smoothing and Knowledge Distillation Compatibility: What was Missing?",
+      "authors": [
+        "Keshigeyan Chandrasegaran",
+        "Ngoc-Trung Tran",
+        "Yunqing Zhao",
+        "Ngai-Man Cheung"
+      ],
+      "year": 2022,
+      "venue": "ICML",
+      "arxiv_id": "2206.14532",
+      "url": "https://proceedings.mlr.press/v162/chandrasegaran22a/chandrasegaran22a.pdf",
+      "bibkey": "chandrasegaran-2022-revisiting",
+      "verified_by": "arxiv",
+      "verified_at": "2026-09-17T16:25:10+00:00",
+      "fulltext": {
+        "path": ".research/sources/s2/fulltext.txt",
+        "sha256": "1bb1b30f694d5de1d4890a5c2c0ad559bdee13da2f6bacad7103a08df5b210ec"
+      },
+      "parser": "pymupdf 1.26.6",
+      "passages": [
+        {
+          "id": "s2.p1",
+          "node_type": "claim",
+          "quote": "This systematic diffusion essentially curtails the benefits (as claimed by Shen et al. (2021b)) obtained by distilling from an LS-trained teacher, thereby rendering KD at increased temperatures ineffective"
+        },
+        {
+          "id": "s2.p2",
+          "node_type": "method",
+          "quote": "We suggest to use an LS-trained teacher with a low-temperature transfer (i.e. T = 1) to achieve high performance students"
+        }
+      ]
+    },
+    {
+      "id": "s3",
+      "title": "Knowledge Distillation ≈ Label Smoothing: Fact or Fallacy?",
+      "authors": [
+        "Md Arafat Sultan"
+      ],
+      "year": 2023,
+      "venue": "EMNLP",
+      "doi": "10.18653/v1/2023.emnlp-main.271",
+      "url": "https://aclanthology.org/2023.emnlp-main.271.pdf",
+      "bibkey": "sultan-2023-knowledge",
+      "verified_by": "doi.org",
+      "verified_at": "2026-09-17T16:25:10+00:00",
+      "fulltext": {
+        "path": ".research/sources/s3/fulltext.txt",
+        "sha256": "46574e2167f03eeec510d47dcd16485cba8adfab4dc45ae546bb29dcb68d9a43"
+      },
+      "parser": "pymupdf 1.26.6",
+      "passages": [
+        {
+          "id": "s3.p1",
+          "node_type": "claim",
+          "quote": "In KD, the student inherits not only its knowledge but also its confidence from the teacher"
+        },
+        {
+          "id": "s3.p2",
+          "node_type": "result",
+          "quote": "As a student learns to mimic its teacher in KD, we see in the above results that it also inherits its confidence"
+        }
+      ]
+    },
+    {
+      "id": "s4",
+      "title": "Is Label Smoothing Truly Incompatible with Knowledge Distillation: An Empirical Study",
+      "authors": [
+        "Zhiqiang Shen",
+        "Zechun Liu",
+        "Dejia Xu",
+        "Zitian Chen",
+        "Kwang-Ting Cheng",
+        "Marios Savvides"
+      ],
+      "year": 2021,
+      "venue": "ICLR",
+      "arxiv_id": "2104.00676",
+      "url": "https://arxiv.org/pdf/2104.00676",
+      "bibkey": "shen-2021-label",
+      "verified_by": "arxiv",
+      "verified_at": "2026-09-17T16:25:11+00:00",
+      "fulltext": {
+        "path": ".research/sources/s4/fulltext.txt",
+        "sha256": "7526a046333890f4ef1b0d6ce4e225ebab38055fd61cb3aeb15b9126ea7ea952"
+      },
+      "parser": "pymupdf 1.26.6",
+      "passages": [
+        {
+          "id": "s4.p1",
+          "node_type": "claim",
+          "quote": "label smoothing erases relative information between teacher logits"
+        }
+      ]
+    }
+  ],
+  "hypotheses": [
+    {
+      "id": "h1",
+      "statement": "ラベルスムージング（LS）で学習した教師から蒸留した生徒は、hard target で学習した教師から蒸留した生徒より較正誤差（ECE）が低く、この差は低温度（T=1）でも高温度（T=4）でも現れる。すなわち生徒が教師の confidence を継承する現象は画像分類の LS 教師にも成り立ち、LS の較正効果は蒸留を通じて生徒に伝わる。",
+      "assumptions": [
+        "15-bin の ECE が較正の代表指標である（c1, c2, c3）",
+        "CIFAR-100、ResNet-18 教師と小型 CNN 生徒、単一 seed の結果が他のデータセット・規模に一般化する（c1, c2, c3）",
+        "accuracy は表で報告するが criterion にしていない。LS 教師の生徒の精度が大きく劣らないことは本研究では測るだけで検証しない（c1, c3）"
+      ],
+      "grounded_on": [
+        "s1.p1",
+        "s1.p2",
+        "s2.p1",
+        "s2.p2",
+        "s3.p1"
+      ],
+      "claims": [
+        {
+          "id": "c1",
+          "statement": "T=1 で LS 教師から蒸留した生徒の ECE は、hard 教師から蒸留した生徒の ECE より 0.01 以上低い。",
+          "rationale": "s2 が精度の観点で推奨する設定（LS 教師、T=1）で較正が生徒に継承されていれば、h1 の主節が成り立つ。",
+          "verifier": {
+            "kind": "seyval"
+          },
+          "designs": [
+            {
+              "id": "d1",
+              "summary": "CIFAR-100 で ResNet-18 教師（hard / LS α=0.1）を学習し、同一の小型 CNN 生徒を KD（KL 0.9 + CE 0.1、T=1）で蒸留、test 10k で 15-bin ECE を測る。",
+              "runs": [
+                {
+                  "run_id": "student-kd-hard-t1",
+                  "description": "生徒、teacher-hard の logits から T=1 で蒸留",
+                  "params": {
+                    "mode": "full"
+                  }
+                },
+                {
+                  "run_id": "student-kd-ls-t1",
+                  "description": "生徒、teacher-ls の logits から T=1 で蒸留",
+                  "params": {
+                    "mode": "full"
+                  }
+                }
+              ]
+            }
+          ],
+          "cites_passages": [
+            "s2.p2",
+            "s3.p1",
+            "s3.p2"
+          ],
+          "criterion": {
+            "metric": "ece",
+            "subject": "student-kd-ls-t1",
+            "reference": "student-kd-hard-t1",
+            "op": "<=",
+            "margin": -0.01
+          },
+          "prediction": {
+            "low": -0.06,
+            "high": -0.01,
+            "basis": "s1 が報告する LS による教師の ECE 低減の一部が生徒に残ると想定"
+          }
+        },
+        {
+          "id": "c2",
+          "statement": "LS（α=0.1）で学習した ResNet-18 教師の ECE は、hard target で学習した教師の ECE より 0.02 以上低い。",
+          "rationale": "教師側に較正差がなければ生徒への継承は検証不能なので、s1 の較正効果を本設定で再現することが h1 の前提を担う。",
+          "verifier": {
+            "kind": "seyval"
+          },
+          "designs": [
+            {
+              "id": "d2",
+              "summary": "ResNet-18 を CIFAR-100 で CE（α=0）と LS（α=0.1）で学習し、test 10k で 15-bin ECE を測る。",
+              "runs": [
+                {
+                  "run_id": "teacher-hard",
+                  "description": "ResNet-18、cross-entropy、α=0",
+                  "params": {
+                    "mode": "full"
+                  }
+                },
+                {
+                  "run_id": "teacher-ls",
+                  "description": "ResNet-18、label smoothing α=0.1",
+                  "params": {
+                    "mode": "full"
+                  }
+                }
+              ]
+            }
+          ],
+          "cites_passages": [
+            "s1.p2"
+          ],
+          "criterion": {
+            "metric": "ece",
+            "subject": "teacher-ls",
+            "reference": "teacher-hard",
+            "op": "<=",
+            "margin": -0.02
+          },
+          "prediction": {
+            "low": -0.1,
+            "high": -0.02,
+            "basis": "s1 Table 3 の CIFAR/ImageNet における ECE 低減の傾向"
+          }
+        },
+        {
+          "id": "c3",
+          "statement": "T=4 で LS 教師から蒸留した生徒の ECE は、hard 教師から蒸留した生徒の ECE より 0.01 以上低い。",
+          "rationale": "s2 は高温度で精度の利得が消えるとするが、confidence の継承（s3）が温度と独立なら較正差は残る。h1 の「T=4 でも現れる」の部分を担う。",
+          "verifier": {
+            "kind": "seyval"
+          },
+          "designs": [
+            {
+              "id": "d3",
+              "summary": "d1 と同じ教師・生徒・損失で温度のみ T=4 にした蒸留。",
+              "runs": [
+                {
+                  "run_id": "student-kd-hard-t4",
+                  "description": "生徒、teacher-hard の logits から T=4 で蒸留",
+                  "params": {
+                    "mode": "full"
+                  }
+                },
+                {
+                  "run_id": "student-kd-ls-t4",
+                  "description": "生徒、teacher-ls の logits から T=4 で蒸留",
+                  "params": {
+                    "mode": "full"
+                  }
+                }
+              ]
+            }
+          ],
+          "cites_passages": [
+            "s2.p1",
+            "s3.p1"
+          ],
+          "criterion": {
+            "metric": "ece",
+            "subject": "student-kd-ls-t4",
+            "reference": "student-kd-hard-t4",
+            "op": "<=",
+            "margin": -0.01
+          },
+          "prediction": {
+            "low": -0.06,
+            "high": -0.005,
+            "basis": "c1 と同程度と予想するが、高温度では soft target が平坦になり差が縮む可能性を上端に含める"
+          }
+        }
+      ],
+      "tables": [
+        {
+          "key": "main",
+          "caption": "CIFAR-100 test での accuracy、ECE、NLL。",
+          "columns": [
+            {
+              "header": "Accuracy",
+              "ref_path": "accuracy"
+            },
+            {
+              "header": "ECE",
+              "ref_path": "ece"
+            },
+            {
+              "header": "NLL",
+              "ref_path": "nll"
+            }
+          ],
+          "rows": [
+            {
+              "run_id": "teacher-hard",
+              "label": "Teacher (hard)"
+            },
+            {
+              "run_id": "teacher-ls",
+              "label": "Teacher (LS 0.1)"
+            },
+            {
+              "run_id": "student-kd-hard-t1",
+              "label": "Student $\\leftarrow$ hard, T=1"
+            },
+            {
+              "run_id": "student-kd-ls-t1",
+              "label": "Student $\\leftarrow$ LS, T=1"
+            },
+            {
+              "run_id": "student-kd-hard-t4",
+              "label": "Student $\\leftarrow$ hard, T=4"
+            },
+            {
+              "run_id": "student-kd-ls-t4",
+              "label": "Student $\\leftarrow$ LS, T=4"
+            }
+          ]
+        }
+      ],
+      "notes": [
+        "計算環境は NVIDIA GPU 1 枚、x86_64 を想定（ユーザー未確認）。seed は config で 1 本に固定。"
+      ]
+    }
+  ]
+}
