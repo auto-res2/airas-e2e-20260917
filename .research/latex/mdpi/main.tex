@@ -1,0 +1,133 @@
+%=================================================================
+% AIRAS preregistration paper. Compiles with lualatex (Japanese text);
+% luatex85 supplies the pdfTeX primitives the mdpi class still uses.
+\RequirePackage{luatex85}
+\documentclass[journal,article,submit,moreauthors]{Definitions/mdpi}
+\usepackage{luatexja-fontspec}
+
+%=================================================================
+% MDPI internal commands - do not modify
+\firstpage{1}
+\makeatletter
+\setcounter{page}{\@firstpage}
+\makeatother
+\pubvolume{1}
+\issuenum{1}
+\articlenumber{0}
+\pubyear{2026}
+\copyrightyear{2026}
+\datereceived{ }
+\daterevised{ }
+\dateaccepted{ }
+\datepublished{ }
+
+%=================================================================
+% AIRAS: every experimental number is realized by update_record into
+% values.tex; before any run exists these fallbacks print a marker.
+\InputIfFileExists{values.tex}{}{}
+\providecommand{\airasval}[1]{\textbf{??airasval:\detokenize{#1}??}}
+\providecommand{\unverified}[1]{#1}
+\providecommand{\airasrecordlink}[1]{#1}
+
+%=================================================================
+\Title{ラベルスムージング教師からの蒸留は生徒の較正を継承するか：温度に対する事前登録実験}
+
+\Author{AIRAS $^{1,}$*}
+\AuthorNames{AIRAS}
+\address{%
+$^{1}$ \quad auto-res2 / airas-e2e-20260917}
+\corres{Correspondence: https://github.com/auto-res2/airas-e2e-20260917}
+
+\abstract{ラベルスムージング（LS）は分類器の較正を改善する一方、LS で学習した教師からの知識蒸留（KD）は精度の面で不利になるという報告と、その反論、温度による調停が続いてきた。しかしこの論争は精度のみで行われ、教師の較正が蒸留を通じて生徒に継承されるかは測られていない。テキスト分類では生徒が教師の confidence を継承することが報告されている。本研究は CIFAR-100 において ResNet-18 教師（hard target / LS $\alpha=0.1$）から小型 CNN 生徒を温度 $T\in\{1,4\}$ で蒸留し、LS 教師の生徒が hard 教師の生徒より期待較正誤差（ECE）で 0.01 以上低いという仮説を、実験前に凍結した三つの claim として事前登録する。結果と考察は実験後に、記録から機械的に実体化した数値のみを用いて記述する。}
+
+\keyword{label smoothing; knowledge distillation; calibration; expected calibration error; preregistration}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{document}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Introduction}
+
+ラベルスムージング（LS）は one-hot ラベルを一様分布と混合して学習する正則化であり、汎化だけでなく較正も改善することが知られている\cite[s1.p2]{mller-2019-when}。一方、同じ研究は LS で学習した教師からの知識蒸留（KD）が効きにくくなることも報告した\cite[s1.p1]{mller-2019-when}。その後、LS は教師 logit の相対情報を消すという説明\cite[s4.p1]{shen-2021-label}と、高温度での蒸留がその利得を打ち消すという「系統的拡散」の説明\cite[s2.p1]{chandrasegaran-2022-revisiting}が示され、実務的には LS 教師を低温度（$T=1$）で蒸留する指針が提案されている\cite[s2.p2]{chandrasegaran-2022-revisiting}。
+
+この一連の議論はすべて生徒の\emph{精度}を対象にしている。教師が LS によって得た較正の良さが、蒸留を通じて生徒に受け渡されるかどうかは測られていない。テキスト分類では、KD の生徒が教師の知識だけでなく confidence も継承すると報告されている\cite[s3.p1]{sultan-2023-knowledge}。本研究はこの観察を画像分類の LS 教師に持ち込み、「LS 教師からの蒸留は生徒の較正を改善するか、そしてそれは温度に依存するか」を、実験前に凍結した仮説と判定基準のもとで検証する。
+
+本稿は事前登録論文である。第\ref{sec:hypothesis}節の claim、判定基準、予測区間は本稿を含むコミットで凍結され、以後の改訂は追記のみが許される。結果と考察は実験後に記述し、そこに現れる実験数値はすべて記録から機械的に実体化されたものである。
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Related Work}
+
+\textbf{LS と較正。} Müller らは LS が期待較正誤差（ECE）を下げ、温度スケーリングなしで較正できることを示した\cite[s1.p2]{mller-2019-when}。同時に、LS 教師から蒸留した生徒の性能が劣ることを、最終層直前の表現がクラスごとの密なクラスタに収縮し、クラス間の類似情報が失われることで説明した\cite[s1.p1]{mller-2019-when}。
+
+\textbf{LS と KD の相性。} 非互換性の説明として、LS が教師 logit 間の相対情報を消すという見方がある\cite[s4.p1]{shen-2021-label}。Chandrasegaran らは両者の矛盾を「系統的拡散」で調停し、LS 教師のもとで高温度の蒸留が生徒表現を意味的に近いクラスへ拡散させ利得を打ち消すこと\cite[s2.p1]{chandrasegaran-2022-revisiting}、したがって $T=1$ の低温度転移を用いるべきこと\cite[s2.p2]{chandrasegaran-2022-revisiting}を示した。ただし、これらの研究はいずれも較正を評価していない。
+
+\textbf{KD と confidence。} Sultan は KD と LS が予測 confidence を逆方向に動かすことを示し、KD では生徒が教師の confidence を継承すると結論した\cite[s3.p1]{sultan-2023-knowledge}。この結果はテキスト分類における観察であり\cite[s3.p2]{sultan-2023-knowledge}、教師が LS で較正されている場合の画像分類には及んでいない。本研究が埋めるのはこの隙間である。
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Hypothesis and Predictions}
+\label{sec:hypothesis}
+
+以下は記録（\texttt{record.json}）から描画された仮説と claim の一覧であり、判定基準と予測区間は実験前に凍結されている。C1 は主張の中核で、Chandrasegaran らが精度の観点から推奨する設定（LS 教師、$T=1$）において較正差が生徒に現れるかを問う。C2 は前提の確認であり、教師側で LS の較正効果が本設定でも再現されなければ「継承」は検証できない。C3 は温度依存性を問い、精度の利得が消えるとされる $T=4$ でも較正差が残るかを見る。
+
+判定基準の余白（$0.01$、$0.02$）は、CIFAR-100 の 15-bin ECE における単一 seed のばらつきを上回る差として選んだ。予測区間の上端を基準値と一致させたのは、基準を満たす最小の差までを「予測どおり」と数えるためであり、区間の下端は Müller らが報告した教師側の ECE 低減幅を超えない範囲とした。区間を外れた結果は、どちらの方向であっても考察で扱う。
+
+\input{claims.tex}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Method}
+
+\textbf{教師の学習。} ResNet-18（CIFAR 版）を CIFAR-100 の訓練集合で学習する。\texttt{teacher-hard} は通常の交差エントロピー（$\alpha=0$）、\texttt{teacher-ls} は $\alpha=0.1$ の LS を用いる。両者は損失以外の全条件（初期化 seed、最適化器、学習率スケジュール、データ拡張、epoch 数）を共有する。
+
+\textbf{生徒の蒸留。} 生徒は ResNet-8 相当の小型 CNN とし、教師 logit に対する温度 $T$ の KL 項と hard label の交差エントロピーを $0.9:0.1$ で混合した損失で学習する。教師の種類（hard / LS）と温度（$T=1$ / $T=4$）の組合せで 4 本の run を得る。教師 logit は学習済み教師を凍結して計算する。
+
+\textbf{評価。} テスト集合 10{,}000 件で accuracy、15-bin ECE、負の対数尤度（NLL）を計算する。ECE は予測 confidence を等幅 15 bin に分け、各 bin の accuracy と平均 confidence の差の加重平均とする。較正の主指標は ECE であり、accuracy と NLL は報告のみで判定には用いない。
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Experimental Setup}
+
+\textbf{データ。} CIFAR-100（訓練 50{,}000、テスト 10{,}000、100 クラス）。標準的な random crop と horizontal flip を訓練時に適用する。
+
+\textbf{run。} 記録に宣言した 6 本の run を実行し、記録から描画される表の行に対応させる。run id と担当する claim は第\ref{sec:hypothesis}節のとおりである。すべての run は \texttt{mode=full} で 1 回ずつ実行し、seed は設定ファイルで固定する。
+
+\textbf{計算環境。} NVIDIA GPU 1 枚（x86\_64）を想定する。依存関係はロックファイルと Dockerfile で固定する。
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% ===== airas: post-experiment sections, filled once runs exist =====
+\section{Results}
+
+実験後に記述する。結果表は \texttt{update\_record} が記録から描画する。
+
+\InputIfFileExists{tables/main.tex}{}{}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Discussion}
+
+実験後に記述する。
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Conclusions}
+
+本稿は、LS 教師からの蒸留が生徒の較正を改善するという仮説を、三つの claim と判定基準、予測区間とともに事前登録した。結論は実験後、記録から実体化した数値に基づいて追記する。
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\vspace{6pt}
+
+\authorcontributions{本研究は AIRAS により仮説立案から論文執筆まで自動で実施された。}
+
+\funding{This research received no external funding.}
+
+\dataavailability{仮説、claim、run の宣言と結果はすべて研究記録 \airasrecordlink{record.json} に、コードは https://github.com/auto-res2/airas-e2e-20260917 にある。}
+
+\acknowledgments{In this study, we automatically carried out a series of research processes---from hypothesis formulation to paper writing---using generative AI.}
+
+\conflictsofinterest{The authors declare no conflicts of interest.}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{adjustwidth}{-\extralength}{0cm}
+
+\bibliographystyle{plainnat}
+\bibliography{references}
+
+\PublishersNote{}
+\end{adjustwidth}
+\end{document}
